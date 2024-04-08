@@ -23,22 +23,32 @@ CommandSeparator,
 CommandShortcut,
 } from "@/components/ui/command"
 
-import Link from "next/link";
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
+
+import Link from "next/link";
+import { ChangeEvent, useState } from "react";
+
   
 
 export default function Workers() {
-    const [search, setSearch] = useState("");
+    type  Worker = {
+        id:string,
+        name:string,
+        job:string,
+        location:string
+    }
+    const [query, setQuery] = useState("");
 
-    const workers = [
+    const workers: Worker[] = [
         {
+            id:"2",
             name:"Abdullah Ahmed",
             job:"Electrician",
             location:"Dhaka"
         },
 
         {
+            id:"1",
             name:"Konka",
             job:"Maid",
             location:"Dhaka"
@@ -46,23 +56,28 @@ export default function Workers() {
 
     ]
 
+    const handleFilter = (e: ChangeEvent<HTMLInputElement>)=>{
+        setQuery(e.target.value.toLocaleLowerCase());
+    }
+
     return (
         <div className="lg:px-16">
 
             <Input
                 className="my-2"
-                value={search}
                 placeholder="Search for categories"
-                onChange={(e)=> setSearch(e.target.value)}
+                onChange={handleFilter}
             />
             <Table>
 
                 <TableBody>
                     
-                    {
-                        workers.map((worker)=>(
+                    { 
+                        workers.
+                        filter((worker)=> worker.job.toLowerCase().includes(query))
+                        .map((worker)=>(
 
-                            <TableRow className="flex items-center justify-between bg-[#F5F7F8]">
+                            <TableRow key={worker.id} className="flex items-center justify-between bg-[#F5F7F8]">
 
                                 <TableCell>
 
@@ -91,11 +106,12 @@ export default function Workers() {
 
                         ))
                     }
+                    
     
                 </TableBody>
 
             </Table>
-            
+
         </div>
     );
   }

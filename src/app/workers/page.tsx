@@ -28,44 +28,22 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { ChangeEvent, useState } from "react";
 
-  
+import { workers } from "@/lib/constants";
 
 export default function Workers() {
-    type  Worker = {
-        id:string,
-        name:string,
-        job:string,
-        location:string
-    }
+
     const [query, setQuery] = useState("");
-
-    const workers: Worker[] = [
-        {
-            id:"2",
-            name:"Abdullah Ahmed",
-            job:"Electrician",
-            location:"Dhaka"
-        },
-
-        {
-            id:"1",
-            name:"Konka",
-            job:"Maid",
-            location:"Dhaka"
-        },
-
-    ]
 
     const handleFilter = (e: ChangeEvent<HTMLInputElement>)=>{
         setQuery(e.target.value.toLocaleLowerCase());
     }
 
     return (
-        <div className="lg:px-16">
+        <div className="">
 
             <Input
                 className="my-2"
-                placeholder="Search for categories"
+                placeholder="Search for categories or location"
                 onChange={handleFilter}
             />
             <Table>
@@ -74,10 +52,10 @@ export default function Workers() {
                     
                     { 
                         workers.
-                        filter((worker)=> worker.job.toLowerCase().includes(query))
+                        filter((worker)=> worker.job.toLowerCase().includes(query) || worker.location.toLowerCase().includes(query))
                         .map((worker)=>(
 
-                            <TableRow key={worker.id} className="flex items-center justify-between bg-[#F5F7F8]">
+                            <TableRow key={worker.id} className="flex items-center justify-between bg-[#F5F7F8] mb-2">
 
                                 <TableCell>
 
@@ -96,8 +74,8 @@ export default function Workers() {
 
                                 <TableCell>
 
-                                    <Button className="bg-blue-600 hover:bg-blue-500">
-                                        <Link href="/">Details</Link>
+                                    <Button className="bg-blue-600 hover:bg-blue-500" asChild>
+                                        <Link href={`workers/${worker.id}`}>Details</Link>
                                     </Button>
 
                                 </TableCell>

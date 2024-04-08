@@ -7,25 +7,35 @@ export const Hero = ()=>{
         <section className="grid sm:grid-cols-2">
 
             <div className="flex flex-col justify-center items-center
-                sm:items-start sm:px-4 
-                lg:items-start lg:px-16"
+                sm:items-start  
+                lg:items-start"
             >
 
                 <div>
 
                     <div className="my-2">
-                        <p className="text-black-800 text-4xl sm:text-6xl">Welcome to</p>
-                        <p className="text-blue-800 text-4xl sm:text-6xl">Kormi</p>
+                        <p className="text-black-800 text-2xl 
+                        sm:text-4xl
+                        lg:text-6xl"
+                        >
+                            Welcome to
+                        </p>
+                        <p className="text-blue-800 text-4xl 
+                        sm:text-4xl
+                        lg:text-6xl"
+                        >
+                            Kormi
+                        </p>
                     </div>
 
                     <div className="flex gap-2">
 
                         <Button asChild>
-                            <Link href="/login">Login</Link>
+                            <Link href="/workers">Workers</Link>
                         </Button>
 
                         <Button asChild>
-                            <Link href="/login">Login</Link>
+                            <Link href="/services">Services</Link>
                         </Button>
                     </div>
 

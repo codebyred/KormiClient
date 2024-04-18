@@ -5,17 +5,21 @@ import Image from "next/image";
 
 import { NAV_LINKS } from "@/lib/constants";
 import { Button } from "@/components/ui/button"
-import { useEffect } from "react";
+import {store} from "@/lib/redux/store"
+import { useState } from "react";
 
-import { io } from "socket.io-client"
+export const Navbar = ({className}:{className: string})=>{
 
-export const Navbar = ()=>{
+    const [logedIn, setLogedIn] = useState(false);
+
+    store.subscribe(()=>{
+        store.getState().authReducer.user !== null?setLogedIn(true):setLogedIn(false);
+    });
+
 
     return (
 
-        <nav className="flex align-middle justify-between px-2 mx-2 py-2 z-30
-            sm:px-4 sm:mx-4
-            lg:px-8 lg:mx-8"
+        <nav className={className}
         >
 
             <div className="flex items-center">
@@ -42,9 +46,15 @@ export const Navbar = ()=>{
 
             <div className="hidden sm:block">
 
-                <Button asChild>
-                    <Link href="/login">Login</Link>
-                </Button>
+                {
+                    !logedIn?
+                    <Button asChild>
+                        <Link href="/login">Login</Link>
+                    </Button>
+                    :
+                    <div>val</div>
+                }
+
 
             </div>
 

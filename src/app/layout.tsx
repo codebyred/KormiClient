@@ -4,6 +4,8 @@ import "./globals.css";
 import { Navbar } from "@/components/core/Navbar";
 import { Footer } from "@/components/core/Footer";
 
+import { ReduxProvider } from "@/lib/redux/provider";
+
 
 export const metadata: Metadata = {
   title: "Kormi",
@@ -20,17 +22,26 @@ export default function RootLayout({
       
       <body>
 
-        <Navbar/>
+        <ReduxProvider>
+          <Navbar className="flex align-middle justify-between 
+            px-2 mx-2 py-2 z-30
+            sm:px-4 sm:mx-4
+            lg:px-8 lg:mx-8"/>
 
-        <main className="
-          pt-2
-          sm:mx-4 sm:px-4
-          lg:mx-8 lg:px-8 lg:pt-8"
-        >
-          {children}
-        </main>
+          <main className="
+            flex flex-col items-center justify-center
+            pt-2 px-2 mx-2
+            sm:mx-4 sm:px-4
+            md:mx-6 md:px-6 
+            lg:mx-8 lg:px-8 lg:pt-8"
+          >
+            {children}
+          </main>
 
-        <Footer/>
+          <Footer/>
+        </ReduxProvider>
+
+
 
       </body>
 

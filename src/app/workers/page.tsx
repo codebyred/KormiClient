@@ -39,7 +39,9 @@ export default function Workers() {
     }
 
     return (
-        <div className="">
+        <div className="
+        sm:w-[30rem]
+        lg:w-[50rem]">
 
             <Input
                 className="my-2"

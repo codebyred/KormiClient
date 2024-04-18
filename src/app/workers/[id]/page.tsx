@@ -1,36 +1,36 @@
 "use client"
 
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+
 import { Button } from "@/components/ui/button";
+
 import { workers } from "@/lib/constants";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Socket, io } from "socket.io-client";
 
 export default function Worker({params}:{params:{id:string}}) {
 
     const [hire, setHire] = useState(true);
     const [bookingStatus, setBookingStatus] = useState("");
 
-    let socket:Socket = io("http://localhost:3010",{
-        auth:{
-            userId:1
-        }
-    });
 
     useEffect(()=>{
-
-        socket.on("booking_status_updated",(data)=>{
-            setBookingStatus(data.status);
-        })
         
     },[]);
 
     function hireWorker(){
         if(hire){
-            socket.emit("book_worker",{workerId: params.id});
             setHire(false);
         }else{
-            socket.emit("cancel_booking",{workerId: params.id});
             setHire(true);
         }
         

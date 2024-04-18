@@ -1,8 +1,13 @@
+"use client"
+
 import Link from "next/link";
 import Image from "next/image";
 
 import { NAV_LINKS } from "@/lib/constants";
 import { Button } from "@/components/ui/button"
+import { useEffect } from "react";
+
+import { io } from "socket.io-client"
 
 export const Navbar = ()=>{
 

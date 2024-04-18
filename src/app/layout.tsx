@@ -22,8 +22,10 @@ export default function RootLayout({
 
         <Navbar/>
 
-        <main className="sm:mx-4 sm:px-4
-          lg:mx-8 lg:px-8"
+        <main className="
+          pt-2
+          sm:mx-4 sm:px-4
+          lg:mx-8 lg:px-8 lg:pt-8"
         >
           {children}
         </main>

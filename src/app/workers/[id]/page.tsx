@@ -16,23 +16,38 @@ import { Button } from "@/components/ui/button";
 import { workers } from "@/lib/constants";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { store } from "@/lib/redux/store";
+import { useRouter } from "next/navigation";
 
 export default function Worker({params}:{params:{id:string}}) {
 
     const [hire, setHire] = useState(true);
     const [bookingStatus, setBookingStatus] = useState("");
 
+    const router = useRouter();
 
     useEffect(()=>{
         
     },[]);
 
-    function hireWorker(){
-        if(hire){
-            setHire(false);
-        }else{
-            setHire(true);
-        }
+    async function hireWorker(){
+
+        if(store.getState().authReducer.user === null) return router.push("/login");
+
+        const user = store.getState().authReducer.user;
+
+        const res = await fetch("http://localhost:3020/api/booking/worker",{
+            method:"POST",
+            headers:{
+                "Content-Type": "application/json"
+            },
+            body:JSON.stringify({
+                clientId:user?.id,
+                workerId:params.id
+            })
+        });
+        const data = await res.json();
+        console.log(data);
         
     }
 
@@ -60,14 +75,38 @@ export default function Worker({params}:{params:{id:string}}) {
                 <div>
                     {bookingStatus}
                 </div>
-                <Button 
-                    className={`mt-2 ${hire?"bg-blue-800":"bg-red-800"} 
-                        ${hire?"hover:bg-blue-600":"hover:bg-red-600"}`}
-                    
-                    onClick={hireWorker}>
-                    {hire && "Hire"}
-                    {!hire && "Cancel"}
-                </Button>
+
+                <Dialog>
+                    <DialogTrigger asChild> 
+                        <Button 
+                            className={`mt-2 bg-blue-800
+                            hover:bg-blue-600`}
+                        >
+                            hire
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                        <DialogTitle>Confirm Hire?</DialogTitle>
+                        <DialogDescription>
+                            You will be charged with 100taka.
+                        </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button className="bg-blue-800 hover:bg-blue-500" type="button"
+                                onClick={hireWorker}>
+                                    Confirm
+                                </Button>
+                            </DialogClose>
+                            <DialogClose asChild>
+                                <Button className="bg-red-800 hover:bg-red-500" type="button">
+                                    Cancel
+                                </Button>
+                            </DialogClose>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
        
         </div>

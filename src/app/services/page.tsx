@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -22,7 +24,35 @@ import {
   
 import { services } from "@/lib/constants"
 
+import { useEffect, useState } from "react";
+import { store } from "@/lib/redux/store";
+import { useRouter } from "next/navigation";
+
 export default function Services(){
+
+    const router = useRouter();
+
+    async function bookService(serviceId:number){
+
+        if(store.getState().authReducer.user === null) return router.push("/login");
+
+        const user = store.getState().authReducer.user;
+
+        const res = await fetch("http://localhost:3020/api/booking/service",{
+            method:"POST",
+            headers:{
+                "Content-Type": "application/json"
+            },
+            body:JSON.stringify({
+                clientId:user?.id,
+                serviceId
+            })
+        });
+        const data = await res.json();
+        console.log(data);
+        
+    }
+
     return (
         <div className="grid gap-2
             sm:grid-cols-2 sm:gap-4
@@ -49,15 +79,16 @@ export default function Services(){
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
-                                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                                    <DialogTitle>Confirm booking?</DialogTitle>
                                     <DialogDescription>
-                                        This action cannot be undone. This will permanently delete your account
-                                        and remove your data from our servers.
+                                        You will be charged {service.charge}
                                     </DialogDescription>
                                     </DialogHeader>
                                     <DialogFooter>
                                         <DialogClose asChild>
-                                            <Button className="bg-blue-800 hover:bg-blue-500" type="button">
+                                            <Button className="bg-blue-800 hover:bg-blue-500" type="button"
+                                                onClick={(e)=>bookService(service.id)}
+                                            >
                                                 Confirm
                                             </Button>
                                         </DialogClose>

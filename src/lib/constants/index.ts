@@ -31,19 +31,19 @@ export const workers = [
 
 export const services = [
     {
-        id:"1",
+        id:1,
         name:"Home Cleaning",
         description:"Get the best cleaners in town",       
         charge:"1000taka",
     },
     {
-        id:"2",
+        id:2,
         name:"Plumbing",
         description:"Get the best plumbing services in cheap price",       
         charge:"800taka",
     },
     {
-        id:"3",
+        id:3,
         name:"Ac Repairing",
         description:"Get your ac Repaired with ease",       
         charge:"1200taka",

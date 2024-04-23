@@ -49,8 +49,8 @@ export default function Worker({params}:{params:{id:string}}) {
     const form = useForm<TBookingWorker>({
         resolver: zodResolver(BookingWorkerSchema),
         defaultValues:{
-            workerId: Number(worker?.id),
-            clientId: Number(user?.id),
+            workerId: 0,
+            clientId: 0,
             address:'',
             city: '',
             postcode: '',    
@@ -59,7 +59,11 @@ export default function Worker({params}:{params:{id:string}}) {
 
     async function pay(formData: TBookingWorker){
 
-        console.log(formData)
+        if(user === null) return router.push("/login");
+        if(worker === null) return router.push("/workers");
+
+        formData.workerId = Number(worker?.id);
+        formData.clientId = Number(user?.id);
 
         const apiResponse = await fetch(`http://localhost:3020/api/booking/worker`,{
             method:"POST",
@@ -162,7 +166,7 @@ export default function Worker({params}:{params:{id:string}}) {
                                     )}
                                 />
                                 <div className="grid grid-flow-col">
-                                    
+
                                     <Button className="mr-2 bg-blue-800 hover:bg-blue-500" type="submit">Pay</Button>                               
                                     
                                     <DialogClose asChild>

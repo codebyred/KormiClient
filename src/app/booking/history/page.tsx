@@ -36,56 +36,44 @@ export default function History(){
     return (
         <div className="flex flex-col items-center justify-center">
             {
-                !workersBookedByClient?.length
-                ?<div>You have no history of booking any worker</div>
+                !workersBookedByClient?.length && !servicesBookedByClient?.length
+                ?<div>You have no booking History</div>
                 :<Table className="mb-8">
-                    <TableCaption>Worker Booking History</TableCaption>
                     <TableHeader>
                         <TableRow>
-                        <TableHead className="w-[100px]">Booking id</TableHead>
-                        <TableHead>Client id</TableHead>
-                        <TableHead>Worker id</TableHead>
+                        <TableHead className="w-[100px]">SI</TableHead>
+                        <TableHead>Item Type</TableHead>
+                        <TableHead>Item Id</TableHead>
                         <TableHead className="text-right">Booking Status</TableHead>
+                        <TableHead className="text-right">Payment Status</TableHead>
+                        <TableHead >Booked At</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {
                             workersBookedByClient.map((booking, index)=>(
                                 <TableRow key={index}>
-                                    <TableCell className="font-medium">{booking.id}</TableCell>
-                                    <TableCell>{booking.clientId}</TableCell>
-                                    <TableCell>{booking.workerId}</TableCell>
-                                    <TableCell className="text-right">{booking.status}</TableCell>
+                                    <TableCell className="font-medium">{index+1}</TableCell>
+                                    <TableCell>Worker</TableCell>
+                                    <TableCell>{booking.workerId}</TableCell>                               
+                                    <TableCell>{booking.status}</TableCell>
+                                    <TableCell>{booking.paid?"paid":"not paid"}</TableCell>
+                                    <TableCell>{booking.createdAt}</TableCell>
                                 </TableRow>
                             ))
-                        }
-                    </TableBody>
-                </Table>
-            }
-
-            {
-                !servicesBookedByClient?.length
-                ?<div>You have no history of booking any service</div>
-                :<Table>
-                    <TableCaption>Service Booking History</TableCaption>
-                    <TableHeader>
-                        <TableRow>
-                        <TableHead className="w-[100px]">Booking id</TableHead>
-                        <TableHead>Client id</TableHead>
-                        <TableHead>Service id</TableHead>
-                        <TableHead className="text-right">Booking Status</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {
+                        }{
+                            
                             servicesBookedByClient.map((booking, index)=>(
                                 <TableRow key={index}>
-                                    <TableCell className="font-medium">{booking.id}</TableCell>
-                                    <TableCell>{booking.clientId}</TableCell>
+                                    <TableCell className="font-medium">{index+1}</TableCell>
+                                    <TableCell>Service</TableCell>
                                     <TableCell>{booking.serviceId}</TableCell>
-                                    <TableCell className="text-right">{booking.status}</TableCell>
+                                    <TableCell>{booking.status}</TableCell>
+                                    <TableCell>{booking.paid?"paid":"not paid"}</TableCell>
+                                    <TableCell>{booking.createdAt}</TableCell>
                                 </TableRow>
                             ))
+                            
                         }
                     </TableBody>
                 </Table>

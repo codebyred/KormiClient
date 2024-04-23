@@ -11,47 +11,75 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 
-import { Button } from "@/components/ui/button";
 
 import { workers } from "@/lib/constants";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { store } from "@/lib/redux/store";
-import { useRouter } from "next/navigation";
+
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { Button } from "@/components/ui/button";
+
+import { BookingWorkerSchema, TBookingWorker } from "@/lib/schemas/booking.schema"
+import { useForm } from "react-hook-form"
+
+import { useSearchParams, useRouter } from 'next/navigation'
+
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Input } from "@/components/ui/input";
+
 
 export default function Worker({params}:{params:{id:string}}) {
 
-    const [hire, setHire] = useState(true);
-    const [bookingStatus, setBookingStatus] = useState("");
-
     const router = useRouter();
 
-    useEffect(()=>{
-        
-    },[]);
+    const worker = workers.find((worker)=> worker.id === Number(params.id));
 
-    async function hireWorker(){
+    const user = store.getState().authReducer.user;
 
-        if(store.getState().authReducer.user === null) return router.push("/login");
+    const form = useForm<TBookingWorker>({
+        resolver: zodResolver(BookingWorkerSchema),
+        defaultValues:{
+            workerId: Number(worker?.id),
+            clientId: Number(user?.id),
+            address:'',
+            city: '',
+            postcode: '',    
+        }
+    });
 
-        const user = store.getState().authReducer.user;
+    async function pay(formData: TBookingWorker){
 
-        const res = await fetch("http://localhost:3020/api/booking/worker",{
+        console.log(formData)
+
+        const apiResponse = await fetch(`http://localhost:3020/api/booking/worker`,{
             method:"POST",
             headers:{
-                "Content-Type": "application/json"
+                "Content-type":"application/json"
             },
-            body:JSON.stringify({
-                clientId:user?.id,
-                workerId:params.id
-            })
+            body:JSON.stringify(
+                formData
+            )
         });
-        const data = await res.json();
-        console.log(data);
+
+        const apiData = await apiResponse.json();
+
+        console.log(apiData);
         
+        return router.push(apiData.url);
+
     }
 
-    const worker = workers.find((worker)=> worker.id === params.id);
+    console.log(form.formState.errors)
 
     return (
         <div className=" bg-slate-50 flex px-8 py-8">
@@ -72,9 +100,6 @@ export default function Worker({params}:{params:{id:string}}) {
                     <p>charge: {worker?.charge}</p>
 
                 </div>
-                <div>
-                    {bookingStatus}
-                </div>
 
                 <Dialog>
                     <DialogTrigger asChild> 
@@ -88,23 +113,66 @@ export default function Worker({params}:{params:{id:string}}) {
                     <DialogContent>
                         <DialogHeader>
                         <DialogTitle>Confirm Hire?</DialogTitle>
-                        <DialogDescription>
-                            You will be charged with 100taka.
-                        </DialogDescription>
                         </DialogHeader>
-                        <DialogFooter>
-                            <DialogClose asChild>
-                                <Button className="bg-blue-800 hover:bg-blue-500" type="button"
-                                onClick={hireWorker}>
-                                    Confirm
-                                </Button>
-                            </DialogClose>
-                            <DialogClose asChild>
-                                <Button className="bg-red-800 hover:bg-red-500" type="button">
-                                    Cancel
-                                </Button>
-                            </DialogClose>
-                        </DialogFooter>
+                        <DialogDescription>
+                            Clicking payment will redirect you to payment options
+                        </DialogDescription>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(pay)}>
+                                <FormField
+                                    control={form.control}
+                                    name="address"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>address</FormLabel>
+                                            <FormControl>
+                                                <Input  {...field} />
+                                            </FormControl>
+
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="city"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>city</FormLabel>
+                                            <FormControl>
+                                                <Input  {...field} />
+                                            </FormControl>
+
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="postcode"
+                                    render={({ field }) => (
+                                        <FormItem className="mb-2">
+                                            <FormLabel>Postcode</FormLabel>
+                                            <FormControl>
+                                                <Input  {...field} />
+                                            </FormControl>
+
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <div className="grid grid-flow-col">
+                                    
+                                    <Button className="mr-2 bg-blue-800 hover:bg-blue-500" type="submit">Pay</Button>                               
+                                    
+                                    <DialogClose asChild>
+                                        <Button className="ml-2 bg-red-800 hover:bg-red-500" type="button">Cancel</Button>   
+                                    </DialogClose>
+
+                                </div>
+
+                            </form>
+                        </Form>
                     </DialogContent>
                 </Dialog>
             </div>

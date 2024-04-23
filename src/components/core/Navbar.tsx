@@ -37,12 +37,12 @@ export const Navbar = ({className}:{className: string})=>{
 
     const dispatch = useDispatch<AppDispatch>();
 
-    store.subscribe(()=>{
-        store.getState().authReducer.user !== null?setLogedIn(true):setLogedIn(false);
-        
-    });
-
     useEffect(()=>{
+
+        store.subscribe(()=>{
+            store.getState().authReducer.user !== null?setLogedIn(true):setLogedIn(false);
+            
+        });
 
         const credentials = store.getState().authReducer;
 

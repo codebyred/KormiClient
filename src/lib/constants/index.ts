@@ -7,7 +7,7 @@ export const NAV_LINKS = [
 
 export const workers = [
     {
-        id:"2",
+        id:2,
         name:"Abdullah Ahmed",
         job:"Electrician",
         location:"Dhaka", 
@@ -18,7 +18,7 @@ export const workers = [
     },
 
     {
-        id:"1",
+        id:1,
         name:"Konka",
         job:"Maid",
         location:"Barishal",     

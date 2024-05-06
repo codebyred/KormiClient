@@ -6,6 +6,9 @@ export const BookingWorkerSchema = z.object({
     address: z.string(),
     city: z.string(),
     postcode: z.string(),
+    schedule: z.date({
+        required_error:"A schedule date required"
+    })
 });
 
 export const BookingServiceSchema = z.object({

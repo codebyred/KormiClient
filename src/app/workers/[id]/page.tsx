@@ -1,5 +1,14 @@
 "use client"
 
+import { cn } from "@/lib/utils"
+import { format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
+import { Calendar } from "@/components/ui/calendar"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
 import {
     Dialog,
     DialogClose,
@@ -36,6 +45,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "@/components/ui/input";
+import { workerBooking } from "@/lib/types"
 
 
 export default function Worker({params}:{params:{id:string}}) {
@@ -46,6 +56,11 @@ export default function Worker({params}:{params:{id:string}}) {
 
     const user = store.getState().authReducer.user;
 
+    const [disabledDays, setDisabledDays]= useState<Date[] | object[]>([
+        {before:new Date()}
+    ]);
+    //const disabledDays = [];
+
     const form = useForm<TBookingWorker>({
         resolver: zodResolver(BookingWorkerSchema),
         defaultValues:{
@@ -53,7 +68,8 @@ export default function Worker({params}:{params:{id:string}}) {
             clientId: 0,
             address:'',
             city: '',
-            postcode: '',    
+            postcode: '',   
+            schedule: new Date() 
         }
     });
 
@@ -76,14 +92,29 @@ export default function Worker({params}:{params:{id:string}}) {
         });
 
         const apiData = await apiResponse.json();
-
-        console.log(apiData);
         
         return router.push(apiData.url);
 
     }
 
-    console.log(form.formState.errors)
+    useEffect(()=>{
+        (async()=>{
+            const apiResponse = await fetch(`http://localhost:3020/api/booking/worker/history/${worker?.id}`,{
+                method:"GET",
+                headers:{
+                    "Content-type":"application/json"
+                }
+            });
+
+            const apiData = await apiResponse.json();
+
+            apiData.history.forEach((booking)=>{
+                setDisabledDays((prevData) => [...prevData, new Date(booking.schedule)])
+            })
+
+        })();
+    },[]);
+
 
     return (
         <div className=" bg-slate-50 flex px-8 py-8">
@@ -159,6 +190,48 @@ export default function Worker({params}:{params:{id:string}}) {
                                             <FormLabel>Postcode</FormLabel>
                                             <FormControl>
                                                 <Input  {...field} />
+                                            </FormControl>
+
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="schedule"
+                                    render={({ field }) => (
+                                        <FormItem className="mb-2">
+                                            <FormLabel>Schedule</FormLabel>
+                                            <FormControl>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "w-[240px] pl-3 text-left font-normal",
+                                                        !field.value && "text-muted-foreground"
+                                                    )}
+                                                    >
+                                                    {field.value ? (
+                                                        format(field.value, "PPP")
+                                                    ) : (
+                                                        <span>Pick a date</span>
+                                                    )}
+                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value}
+                                                    onSelect={field.onChange}
+                                                    disabled={disabledDays}
+                                                    initialFocus
+                                                />
+                                                </PopoverContent>
+                                            </Popover>
                                             </FormControl>
 
                                             <FormMessage />
